@@ -6,6 +6,27 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LearnWeb3 First dApp</title>
+
+    <!-- css -->
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        div {
+            width: 20%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        button {
+            width: 100%;
+            margin: 10px 0px 5px 0px;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -20,5 +41,79 @@
         <p id="showMood"></p>
     </div>
 </body>
+
+
+<script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js" type="application/javascript" />
+
+<script>
+    // Replace the following two values
+    const MoodContractAddress = 0xB2e6b82bF799f2369ACBdA2859e7b1F1A25E270f;
+    const MoodContractABI = [
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "_mood",
+                    "type": "string"
+                }
+            ],
+            "name": "setMood",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getMood",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }
+    ];
+
+    // Currently these two are undefined, we will use Ethers to assign them values
+
+    let MoodContract = provider.send("eth_requestAccounts", []).then(() => {
+        provider.listAccounts().then((accounts) => {
+            signer = provider.getSigner(accounts[0]);
+            MoodContract = new ethers.Contract(
+                MoodContractAddress,
+                MoodContractABI,
+                signer
+            );
+        });
+    });;
+    let signer = provider.send("eth_requestAccounts", []).then(() => {
+        provider.listAccounts().then((accounts) => {
+            signer = provider.getSigner(accounts[0]);
+            MoodContract = new ethers.Contract(
+                MoodContractAddress,
+                MoodContractABI,
+                signer
+            );
+        });
+    });;
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "sepolia");
+
+    async function getMood() {
+        const mood = await MoodContract.getMood();
+        document.getElementById("showMood").innerText = `Your Mood: ${mood}`;
+        console.log(mood);
+    }
+
+    async function setMood() {
+        const mood = document.getElementById("mood").value;
+        await MoodContract.setMood(mood);
+    }
+
+
+</script>
 
 </html>
